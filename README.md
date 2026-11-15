@@ -9,6 +9,10 @@
 
 Everything is our own convolutional neural network, **trained from scratch** (no pretrained models).
 
+![PneumoType system](figures/system.png)
+
+![Results](figures/results.png)
+
 ## The problem
 Pneumonia is the biggest infectious killer of children under five worldwide. When a child arrives at a clinic with a cough and fever, the doctor has to decide fast whether it's bacterial pneumonia (needs antibiotics), viral pneumonia (usually doesn't) or no pneumonia at all, often without a radiologist. Guessing wrong either way causes harm: a missed bacterial infection, or unnecessary antibiotics that drive resistance.
 
