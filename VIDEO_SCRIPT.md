@@ -1,6 +1,6 @@
 # PneumoType: 2-minute demo video script
 
-Record your screen with your voice over it. Numbers in [brackets] get updated from the final Kaggle run (section 21, "Numbers for your write-up").
+Record your screen with your voice over it. All numbers are from the final Kaggle run (section 21 of the notebook).
 
 ---
 
@@ -14,14 +14,14 @@ Record your screen with your voice over it. Numbers in [brackets] get updated fr
    > "This heatmap shows where the model looked, so a doctor can check it's focusing on the lungs."
 3. Point at the **"pneumonia check for anyone"** line.
    > "It also works on adults. We trained it across a children's hospital and an adult hospital using federated learning, so neither hospital ever had to share a single patient X-ray. Only model weights were shared."
-4. Upload or click a harder case that comes back **UNSURE**.
+4. Click the **3rd example** X-ray (a bacterial case). The model leans viral, so it says **UNSURE**.
    > "And when it isn't confident, it doesn't guess. It says: refer to a doctor. That's on purpose."
 
-## 1:15–1:45 · How it works and how well (show: the results table and the robustness/federated charts)
-> "Everything is our own convolutional neural network, trained from scratch, with no pretrained models. On [799] X-rays it had never seen, it caught [96.5%] of pneumonia cases, compared with [77%] for a simple baseline, with only [9] false alarms out of [222] healthy X-rays. We tuned it so the most dangerous mistake, missing a bacterial case, dropped from [58] to [23]. Federated learning reached [X]% balanced accuracy on both children and adults, close to pooling all the data, without sharing any."
+## 1:15–1:45 · How it works and how well (show: the results table, then the federated chart)
+> "Everything is our own neural network, trained from scratch. On 799 X-rays it had never seen, it caught 95% of pneumonia cases, with only 8 false alarms out of 222 healthy children. A simple baseline missed 92 bacterial cases; with our safety tuning we miss 22. When it's at least 90% confident, it's right 98% of the time. And for children and adults together, federated learning gave the best worst-case result of any setup that keeps X-rays private: 83% balanced accuracy on both."
 
 ## 1:45–2:00 · Honest limits and next steps (show: shortcut test or failure examples)
-> "It's not perfect. Bacterial versus viral is hard even for radiologists, and we caught our first model failing on lower-quality X-rays, so we trained a second, more robust one. We also tested whether it was cheating by blacking out the lungs. Next, we'd test it at a real clinic with more hospitals in the federation. This is a prototype, not medical advice."
+> "It's not perfect. Bacterial versus viral is hard even for radiologists. Our first model dropped to 73% on low-contrast X-rays, so we trained a second, robust model, and together they stay at 82–83% on every kind of image. We also blacked out the lungs to check it wasn't cheating, and it dropped to pure chance, so it really is reading the lungs. Next: tune the federated model at each hospital, and test at a real clinic. This is a prototype, not medical advice."
 
 ---
 
