@@ -30,15 +30,18 @@ Everything is our own convolutional neural network, **trained from scratch** (no
 
 ## The problem
 **Pneumonia is the world's biggest infectious killer of young children.**
+
 - About **740,000 children under five die of pneumonia every year**, which is 14% of all under-5 deaths and more than any other infectious disease ([WHO, 2019 data](https://www.who.int/en/news-room/fact-sheets/detail/pneumonia)). That is about **one child every 43 seconds** ([UNICEF](https://data.unicef.org/topic/child-help/pneumonia/)).
 - Across all ages, lower respiratory infections killed **2.18 million people in 2021** ([GBD 2021, *Lancet Infectious Diseases* 2024](https://openaccess.sgul.ac.uk/id/eprint/117094)).
 - The burden falls on the poorest countries: about **half of under-5 pneumonia deaths are in the lowest-income countries** (by the Global Burden of Disease's Socio-demographic Index, an income-and-education score), mostly in sub-Saharan Africa and South Asia ([IHME/GBD 2021](https://www.healthdata.org/node/11019)).
 
 **The X-ray often has no one to read it.**
+
 - **Ghana has about 3 radiologists per million people, and 7 of its 16 regions have none.** Nigeria has roughly 1.5 per million, against about 100 per million in the US ([Ghana radiologist density study, 2023](https://openaccess.city.ac.uk/31768/11/s42058-023-00130-z.pdf); [Botswana audit, 2024](https://pmc.ncbi.nlm.nih.gov/articles/PMC12376231)).
 - Even rich health systems can't keep up: the UK is short **32% of the radiologists it needs**, and **940,900 scan reports** missed the one-month target in 2025 ([Royal College of Radiologists census](https://www.rcr.ac.uk/media/n1fjvrv4/rcr-2025-clinical-radiology-workforce-census-report.pdf)).
 
 **Even experts disagree, and the type matters.**
+
 - In a WHO study, 20 trained readers called pneumonia on anywhere from **8% to 61% of the same children's X-rays** ([Cherian et al., *Bull WHO* 2005](https://scielosp.org/article/bwho/2005.v83n5/353-359)). Radiologists agree only weakly on some findings (kappa as low as 0.14) ([Neuman et al., *J Hosp Med*](https://www.pubmed.gov/22009855/)).
 - In 2.4 million US veterans' hospital stays, **36% of patients first diagnosed with pneumonia didn't have it at discharge, and 33% of real cases were missed at admission** ([*Annals of Internal Medicine* 2024, via CIDRAP](https://www.cidrap.umn.edu/antimicrobial-stewardship/va-study-finds-diagnostic-uncertainty-common-pneumonia)).
 - Most severe childhood pneumonia is **viral (61%), not bacterial (27%)** ([PERCH study, *The Lancet* 2019](https://pubmed.ncbi.nlm.nih.gov/31257127/)), yet antibiotics are routinely given anyway. Drug-resistant infections were directly responsible for **1.27 million deaths in 2019**, more than 400,000 of them from lower respiratory infections ([GBD AMR, *The Lancet* 2022](https://pubmed.ncbi.nlm.nih.gov/35065702/)).
@@ -70,6 +73,7 @@ Our own idea. Beyond a basic pneumonia classifier, we added:
 
 ## How it works
 **Data**
+
 - **Children:** Kermany et al. 2018 pediatric chest X-rays from Guangzhou Women and Children's Medical Center, about 5,800 images of children aged 1–5 (normal / bacterial / viral). Split **by patient** 70/15/15, so no child appears in both training and test. The test set has 799 X-rays.
 - **Adults:** COVID-19 Radiography Database. We used 6,000 X-rays: normal and lung-opacity X-rays from RSNA, and COVID-19 pneumonia X-rays.
 - **Leakage check:** that database re-uses 1,341 "normal" X-rays from the children's dataset. We **removed** them using its source metadata.
