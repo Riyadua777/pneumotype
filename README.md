@@ -36,6 +36,7 @@ Our own idea. Beyond a basic pneumonia classifier, we added:
 5. **A shortcut test:** we blacked out the lungs to check the model isn't cheating off image borders.
 6. **Children and adults with federated learning:** two simulated hospitals train one model and share only weights, never X-rays.
 7. **95% confidence intervals**, bootstrapped by patient.
+8. **Tuberculosis with four hospital-shortcut checks.** They caught our TB model cheating, so we left TB out of the demo (see below).
 
 ## How it works
 **Data**
@@ -108,6 +109,22 @@ Balanced accuracy on each population's test set (AUC in brackets):
 - **Pooling all the data does best,** but it needs hospitals to hand over patient X-rays.
 - **Honest limitation:** the federated model is cautious on children. It caught 72% of pneumonia, with 98.6% of normal X-rays correctly cleared. Its AUC of 0.965 shows the ranking is good, so tuning its decision threshold per hospital is our next step.
 
+### Tuberculosis: we caught our own model cheating
+We added the **Tuberculosis (TB) Chest X-ray Database** (adults; 700 TB + 1,400 normal sampled) as a third hospital, after removing **duplicate images across datasets** with an image fingerprint. Then we trained a normal / pneumonia / TB model.
+
+| Model (normal / pneumonia / TB) | Balanced acc (all 3 hospitals) | TB caught | Normal X-rays called TB (children / adults / TB hospital) |
+|---|---|---|---|
+| Pooled (shares X-rays) | 0.854 | 91.3% | 0% / 6.7% / 10.3% |
+| Federated, 3 hospitals | 0.536 | **0%** | n/a |
+
+On paper, TB detection looks great: 91% caught. **Our four shortcut checks say not to trust it:**
+1. **Hospital detector:** a CNN trained only to guess the hospital gets **92.4%** right (chance is 33%), so the hospitals' X-rays look very different.
+2. **Same-hospital test:** inside the TB hospital it still catches 91.3% of TB, with 89.7% of normals cleared.
+3. **Normals called TB:** this happens more often at the TB hospital (10.3%) than for adults (6.7%) or children (0%), a hint of a hospital effect.
+4. **Lungs blacked out:** the model **still "detects" TB 100% of the time with no lungs visible.** That's the smoking gun. Its TB decision is driven by something outside the lungs, such as the image source, borders or exposure, not by the disease.
+
+**Conclusion:** our pneumonia models pass the lungs-blacked-out test (they drop to chance), but the TB model fails it. This is the same trap as the well-known COVID-19 X-ray AI shortcut problem (DeGrave et al., *Nature Machine Intelligence*, 2021). We therefore **do not offer TB detection** in the demo. With only one hospital supplying TB cases, federated learning also failed: the TB hospital's signal was averaged away and the federated model caught 0% of TB. A trustworthy TB model needs TB *and* normal X-rays from many hospitals.
+
 ## Where it fails
 - **Bacterial vs viral mix-ups** cause most errors (104 of 139). That's expected, because even radiologists can't reliably tell the type from an X-ray alone.
 - **The most confident mistakes are pneumonia cases called normal.** These look like mild or early cases where the signs are faint at 224×224.
@@ -119,16 +136,18 @@ Balanced accuracy on each population's test set (AUC in brackets):
 
 ## What we'd do next
 1. Tune the federated model's threshold at each hospital, and add more hospitals to the federation.
-2. Add tuberculosis as a fourth diagnosis, with a check that the model learns the disease rather than which hospital an image came from.
+2. Fix the TB shortcut: gather TB and normal X-rays from the *same* hospitals, and train with lung segmentation so the model can only see the lungs.
 3. Test with real clinicians at a clinic, on X-rays from a new hospital.
 
 ## Sources
 - **Children's dataset:** Kermany, Zhang & Goldbaum (2018), *Labeled Optical Coherence Tomography (OCT) and Chest X-Ray Images for Classification*, Mendeley Data. Kaggle copy: "Chest X-Ray Images (Pneumonia)" by Paul Mooney (CC BY 4.0).
+- **TB dataset:** Tuberculosis (TB) Chest X-ray Database, Rahman et al. 2020, Kaggle (tawsifurrahman/tuberculosis-tb-chest-xray-dataset).
 - **Adult dataset:** COVID-19 Radiography Database, Chowdhury et al. 2020 and Rahman et al. 2021, Kaggle (tawsifurrahman/covid19-radiography-database). It includes RSNA Pneumonia Detection Challenge images.
-- **Methods:** FedAvg (McMahan et al., 2017), Grad-CAM (Selvaraju et al., 2017), temperature scaling (Guo et al., 2017).
+- **Methods:** shortcut learning in COVID-19 X-ray AI (DeGrave et al., 2021), FedAvg (McMahan et al., 2017), Grad-CAM (Selvaraju et al., 2017), temperature scaling (Guo et al., 2017).
 - **Libraries:** PyTorch, torchvision, scikit-learn, pandas, matplotlib, Gradio.
 - **No pretrained models.**
 - **AI tools:** Claude (Anthropic) helped plan the project and draft code and this write-up. [Add any others.]
 
 ## How to run
-Open `pneumotype.ipynb` on Kaggle and add the two datasets above as inputs. Turn on GPU T4 and Internet, then Run All. It takes about 70 minutes, and the last cells launch the Gradio demo.
+- **Full project:** open `pneumotype.ipynb` on Kaggle and add the three datasets above as inputs. Turn on GPU T4 and Internet, then Run All. It takes about 90 minutes.
+- **Demo only:** open `pneumotype_demo.ipynb` and add the PneumoType notebook's output (the trained weights) as an input. It launches the Gradio app in about 2 minutes.
