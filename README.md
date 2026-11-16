@@ -264,7 +264,7 @@ On paper, TB detection looks great: 91% caught. **Our four shortcut checks say n
 - **Methods:** split conformal prediction (Angelopoulos & Bates, 2021), shortcut learning in COVID-19 X-ray AI (DeGrave et al., 2021), FedAvg (McMahan et al., 2017), Grad-CAM (Selvaraju et al., 2017), temperature scaling (Guo et al., 2017).
 - **Libraries:** PyTorch, torchvision, scikit-learn, pandas, matplotlib, Gradio.
 - **No pretrained models.**
-- **AI tools:** Claude (Anthropic) helped plan the project and draft code and this write-up.
+- **AI tools:** Claude (Anthropic) helped draft code and this write-up.
 
 ## How to run
 - **Full project:** open `pneumotype.ipynb` on Kaggle and add the three datasets above as inputs. Turn on GPU T4 and Internet, then Run All. It takes about 90 minutes.
