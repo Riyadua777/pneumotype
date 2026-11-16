@@ -10,6 +10,8 @@ Record your screen with your voice over it. All numbers are from the final Kaggl
 ## 0:15–1:15 · The demo (show: Gradio app)
 1. Click a **bacterial** example X-ray.
    > "We built PneumoType. A doctor uploads a chest X-ray, and in about a second it says whether there's pneumonia, what type, and how confident it is."
+   Point at the **"95% guaranteed answer"** line.
+   > "Underneath, it gives an answer with a statistical guarantee. Here it says pneumonia, but it honestly can't be sure if it's bacterial or viral, and that's often true even for radiologists."
 2. Point at the **heatmap**.
    > "This heatmap shows where the model looked, so a doctor can check it's focusing on the lungs."
 3. Point at the **"pneumonia check for anyone"** line.
