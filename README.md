@@ -9,6 +9,11 @@
 
 Everything is our own convolutional neural network, **trained from scratch** (no pretrained models).
 
+> **Judges, start here:**
+> - **Notebook with all results:** [`pneumotype.ipynb`](pneumotype.ipynb). Upgrades are in [`pneumotype_upgrades.ipynb`](pneumotype_upgrades.ipynb).
+> - **Demo app:** [`pneumotype_demo.ipynb`](pneumotype_demo.ipynb), shown in the video.
+> - **Five-second version:** 97% of pneumonia caught, a 95%-guaranteed answer via conformal prediction, federated learning across children and adults, and a TB model we caught cheating and kept out.
+
 ## Key findings
 1. **97% of pneumonia caught** on 799 unseen children's X-rays (95% CI 96–99%), with only **7 false alarms** out of 222 healthy X-rays, beating a simple baseline.
 2. **Safety tuning cut dangerous misses (bacterial cases called viral or normal) from 92 to 18**, and the tool says **"unsure, refer"** instead of guessing. When it's at least 90% confident, it's right **98%** of the time (97.7%).
@@ -125,6 +130,8 @@ A confidence score can be wrong about itself. **Conformal prediction** fixes tha
 | 80% | 82.6% | 0.97 | 97% | 85.2% | 95.5% / 81.8% / 70.0% |
 | 90% | 93.2% | 1.26 | 74% | 91.7% | 98.2% / 92.2% / 89.7% |
 | **95%** | **96.4%** | **1.44** | **58%** | **95.0%** | **99.5% / 94.9% / 95.6%** |
+
+![Conformal prediction](figures/conformal.png)
 
 At 95%, the answers on the test set were: *normal* 206, *bacterial* 155, *viral* 101, ***bacterial or viral*** 292, *normal or viral* 22, *normal or bacterial* 8 and *all three* 15. The most common uncertain answer, "pneumonia, but the type is unclear", is clinically useful in its own right: it says to treat this as pneumonia and get more tests to decide on antibiotics. This matches the biology, since bacterial and viral pneumonia often look alike on an X-ray.
 
