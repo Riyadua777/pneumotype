@@ -19,6 +19,10 @@ Record your screen with your voice over it. All numbers are from the final Kaggl
 4. Click the **3rd example** X-ray (a bacterial case). The model leans viral, so it says **UNSURE**.
    > "And when it isn't confident, it doesn't guess. It says: refer to a doctor. That's on purpose."
 
+## Agent beat (use the PneumoType Agent link)
+Click an example X-ray, then **Run triage agent**. Point at the trace and the orange guardrail line.
+> "This is built for clinics with no radiologist. An AI agent decides which of our tools to run and explains the result in the health worker's own language. But here it tried to skip a safety check and pick a less urgent triage, so our guardrail stepped in and made it URGENT. In testing, the agent skipped safety checks 94% of the time, which is exactly why the AI coordinates and our safety policy decides."
+
 ## 1:15–1:45 · How it works and how well (show: the results table, then the federated chart)
 > "Everything is our own neural network, trained from scratch. On 799 X-rays it had never seen, it caught 97% of pneumonia cases, with only 7 false alarms out of 222 healthy children. A simple baseline missed 92 bacterial cases; with our safety tuning we miss 18. And with conformal prediction we get a statistical guarantee: the true diagnosis is in its answer 96% of the time, and when it can't tell bacterial from viral, it says so instead of guessing. And for children and adults together, federated learning gave the best worst-case result of any setup that keeps X-rays private: at least 83% balanced accuracy on both."
 

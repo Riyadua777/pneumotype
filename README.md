@@ -12,6 +12,7 @@ Everything is our own convolutional neural network, **trained from scratch** (no
 > **Judges, start here:**
 > - **Notebook with all results:** [`pneumotype.ipynb`](pneumotype.ipynb). Upgrades are in [`pneumotype_upgrades.ipynb`](pneumotype_upgrades.ipynb).
 > - **Demo app:** [`pneumotype_demo.ipynb`](pneumotype_demo.ipynb), shown in the video.
+> - **Agent app:** [`pneumotype_agent.ipynb`](pneumotype_agent.ipynb): a language model coordinates our tools under safety guardrails, with reports in 7 languages.
 > - **Five-second version:** 97% of pneumonia caught, a 95%-guaranteed answer via conformal prediction, federated learning across children and adults, and a TB model we caught cheating and kept out.
 
 ## Key findings
@@ -150,14 +151,25 @@ Each hospital keeps the shared federated model but picks its own decision thresh
 ### PneumoType Agent: built for clinics with very little
 **The problem we're solving:** many clinics have no radiologist, no powerful computer and unreliable internet, and their health workers may not work in English.
 
-- **Runs on a cheap laptop.** Both our CNNs together are **38 MB** and take **123 ms per X-ray on 2 CPU cores**, with no GPU and no internet needed for the diagnosis.
+- **Runs on a cheap laptop.** Both our CNNs together are **38 MB** and take **about 0.1 seconds per X-ray on 2 CPU cores** (102–123 ms across runs), with no GPU and no internet needed for the diagnosis.
 - **An AI agent that coordinates, not diagnoses.** A small open language model (Qwen2.5-1.5B-Instruct, not trained by us) never sees the X-ray. It can only **call our tools**: the image-quality check, the two CNNs, a "second look" at extra zoom levels, the Grad-CAM attention check, the conformal 95% set and the federated all-ages model. It decides which tools to call, reads their results, and writes a triage (URGENT / REVIEW TODAY / REVIEW / ROUTINE / REFER) with a plain-language summary.
 - **Safety guardrails the agent can't get around:**
   1. It can't finish until it has called every required safety tool.
   2. If it picks a less urgent triage than our fixed safety policy allows, the policy overrides it, and the override is shown to the clinician.
   3. Invalid replies get one retry, then the next required tool runs automatically.
 - **Speaks the health worker's language.** The triage summary and "Ask the agent" answers come in English, Spanish, French, Portuguese, Hindi, Bengali or Swahili. Answers may only use the tool results, and the agent never gives drug names or doses.
-- **We evaluated the agent's behaviour,** not just its answers (`pneumotype_agent.ipynb`, section 4). AGENT_EVAL_PLACEHOLDER
+- **We evaluated the agent's behaviour,** not just its answers (`pneumotype_agent.ipynb`, section 4). On 18 X-rays (6 normal, 6 bacterial, 6 viral):
+
+| Measure | Result |
+|---|---|
+| Replies that were valid JSON | **100%** |
+| Runs where the agent called every safety tool **without being forced** | **6%** |
+| Runs where the guardrail **overrode a too-relaxed triage** | **28%** |
+| Runs that used the "second look" | 17% |
+| Average steps / seconds per X-ray (GPU) | 7.3 / 11.3 s |
+
+  **What this taught us:** a small language model follows the output format perfectly, but it **skips safety checks almost every time** and picks a less urgent triage than the evidence supports more than a quarter of the time. So in PneumoType, the language model only coordinates and explains. Our CNNs, the conformal guarantee and a fixed safety policy make the decision, and every override is shown to the clinician. *These example X-rays come from the dataset's original test folder, which may overlap with our training split, so we report agent behaviour here, not accuracy.*
+- **Honest limitation:** the small language model's free-text answers can still be imperfect. In an early version it misdescribed a pneumonia X-ray as "normal", so we now give it only plain-language facts (including the reason for the triage) and tell it not to add findings.
 
 ### Tuberculosis: we caught our own model cheating
 We added the **Tuberculosis (TB) Chest X-ray Database** (adults; 700 TB + 1,400 normal sampled) as a third hospital, after removing **duplicate images across datasets** with an image fingerprint. Then we trained a normal / pneumonia / TB model.
@@ -187,9 +199,10 @@ On paper, TB detection looks great: 91% caught. **Our four shortcut checks say n
   - Adult X-rays come from different sources than the children's, so some differences between them may come from equipment, not age.
 
 ## What we'd do next
-1. Add more hospitals to the federation, and set each hospital's threshold for a target sensitivity using more validation data.
-2. Fix the TB shortcut: gather TB and normal X-rays from the *same* hospitals, and train with lung segmentation so the model can only see the lungs.
-3. Test with real clinicians at a clinic, on X-rays from a new hospital.
+1. Test the agent with community health workers, measure whether its explanations help them act, and try a larger language model that runs on a laptop.
+2. Add more hospitals to the federation, and set each hospital's threshold for a target sensitivity using more validation data.
+3. Fix the TB shortcut: gather TB and normal X-rays from the *same* hospitals, and train with lung segmentation so the model can only see the lungs.
+4. Test with real clinicians at a clinic, on X-rays from a new hospital.
 
 ## Sources
 - **Children's dataset:** Kermany, Zhang & Goldbaum (2018), *Labeled Optical Coherence Tomography (OCT) and Chest X-Ray Images for Classification*, Mendeley Data. Kaggle copy: "Chest X-Ray Images (Pneumonia)" by Paul Mooney (CC BY 4.0).
