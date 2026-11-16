@@ -65,6 +65,21 @@ Everything is our own convolutional neural network, **trained from scratch** (no
 - Most severe childhood pneumonia is **viral (61%), not bacterial (27%)** ([PERCH study, *The Lancet* 2019](https://pubmed.ncbi.nlm.nih.gov/31257127/)), yet antibiotics are routinely given anyway. Drug-resistant infections were directly responsible for **1.27 million deaths in 2019**, more than 400,000 of them from lower respiratory infections ([GBD AMR, *The Lancet* 2022](https://pubmed.ncbi.nlm.nih.gov/35065702/)).
 - Getting it right is cheap: a full course of amoxicillin for a child costs **US$0.22–0.43** ([UNICEF Supply Division](https://www.unicef.org/supply/media/511/file/amoxicillin-dispersible-tablets-market-and-supply-update.pdf)).
 
+### How often pneumonia is misdiagnosed
+
+| Finding | Number | Source |
+|---|---|---|
+| Patients first diagnosed with pneumonia who **didn't have it** at discharge (over-diagnosis) | **36%** | 2.38M hospital stays, 118 US VA hospitals, 2015–22 ([*Annals of Internal Medicine* 2024](https://www.cidrap.umn.edu/antimicrobial-stewardship/va-study-finds-diagnostic-uncertainty-common-pneumonia)) |
+| Real pneumonia cases (with positive X-rays) **missed** at admission | **33%** | same study |
+| Missed patients who then got **delayed antibiotics** | **22%** | same study |
+| Emergency-department notes expressing **diagnostic uncertainty** | **58%** | same study |
+| 30-day **death rate** when the diagnosis changed vs stayed the same | **14.4% vs 10.6%** | same study |
+| Lung opacities seen on CT that the **chest X-ray missed** | **56%** (X-ray sensitivity 43.5%) | Emergency department patients ([Self et al. 2013](https://pmc.ncbi.nlm.nih.gov/articles/PMC3556231)) |
+| X-ray "opacities" **not confirmed** on CT | **73%** | same study |
+| Share of the **same children's X-rays** called pneumonia by different trained readers | **8% to 61%** | 20 readers ([WHO, *Bull WHO* 2005](https://scielosp.org/article/bwho/2005.v83n5/353-359)) |
+
+*These are adult, US hospital figures, the best large studies available. We found no reliable misdiagnosis rate for children or for clinics without a radiologist, where it is likely worse. This is exactly the gap LungLens targets.*
+
 When a child arrives at a clinic with a cough and fever, the doctor has to decide fast whether it's bacterial pneumonia (needs antibiotics), viral pneumonia (usually doesn't) or no pneumonia at all, often without a radiologist. Guessing wrong either way causes harm: a missed bacterial infection, or unnecessary antibiotics that drive resistance. *(An X-ray alone can't confirm the cause, so LungLens is decision support for a clinician, not a final diagnosis.)*
 
 **Our user:** a doctor at a children's clinic with no radiologist on hand, who wants a fast, honest second opinion on a chest X-ray.
