@@ -5,14 +5,14 @@
 
 > This project is a prototype and is not medical advice.
 
-**In one sentence:** PneumoType catches **95% of pneumonia** on chest X-rays it has never seen, tells a doctor whether it looks **bacterial or viral**, says **"unsure, refer"** instead of guessing, and can be trained across hospitals with **federated learning**, so no hospital has to share a single patient X-ray.
+**In one sentence:** PneumoType catches **97% of pneumonia** on chest X-rays it has never seen, tells a doctor whether it looks **bacterial or viral**, says **"unsure, refer"** instead of guessing, and can be trained across hospitals with **federated learning**, so no hospital has to share a single patient X-ray.
 
 Everything is our own convolutional neural network, **trained from scratch** (no pretrained models).
 
 ## Key findings
-1. **95% of pneumonia caught** on 799 unseen children's X-rays (95% CI 93–97%), with only **8 false alarms** out of 222 healthy X-rays, beating a simple baseline.
-2. **Safety tuning cut dangerous misses (bacterial cases called viral or normal) from 92 to 22**, and the tool says **"unsure, refer"** instead of guessing. When it's at least 90% confident, it's right **98%** of the time.
-3. **We found a weakness and fixed it:** our first CNN fell to 73% on low-quality X-rays, and a second "clinic-robust" CNN brought it back to 82–83%.
+1. **97% of pneumonia caught** on 799 unseen children's X-rays (95% CI 96–99%), with only **7 false alarms** out of 222 healthy X-rays, beating a simple baseline.
+2. **Safety tuning cut dangerous misses (bacterial cases called viral or normal) from 92 to 18**, and the tool says **"unsure, refer"** instead of guessing. When it's at least 90% confident, it's right **98%** of the time (97.7%).
+3. **We found a weakness and fixed it:** our first CNN fell to 66% on low-quality X-rays, and a second "clinic-robust" CNN brought it back to 83%.
 4. **Federated learning across a children's and an adult hospital** gave the best worst-case result of any setup that keeps X-rays private.
 5. **We caught our own TB model cheating:** it "detects" TB even with the lungs blacked out. Our pneumonia models pass that test, so we kept TB out of the demo.
 
@@ -54,7 +54,7 @@ Our own idea. Beyond a basic pneumonia classifier, we added:
 **Models** (all trained from random weights)
 - **The CNN:** 5 blocks of convolution → batch norm → ReLU → max-pool (32 to 512 filters), then global average pooling, dropout and a linear layer. About 4.7M parameters, 224×224 grayscale input, class-weighted loss, 25 epochs. We kept the epoch with the best validation macro recall.
 - **CNN 2 ("clinic-robust"):** the same architecture, trained with random contrast, blur and low-resolution augmentation.
-- **Final model:** the ensemble of CNN 1 and CNN 2, plus test-time augmentation. It was **chosen on validation**, not test. Temperature calibration was checked too (it was already well calibrated: ECE 0.034).
+- **Final model:** the ensemble of CNN 1 and CNN 2, plus test-time augmentation. It was **chosen on validation**, not test. Temperature calibration was checked too (temperature 0.95; calibration error ECE fell from 0.044 to 0.037).
 - **Federated model:** FedAvg across a "children's hospital" and an "adult hospital". Each trains locally for one epoch per round and a server averages the weights, for 8 rounds.
 
 ## Results (held-out test set, never used for training or model choice)
@@ -64,41 +64,41 @@ Our own idea. Beyond a basic pneumonia classifier, we added:
 |---|---|---|---|---|---|---|---|
 | Baseline: always "bacterial" | 0.468 | 0.333 | 1.000 | 0.000 | 1.000 | 222 | 0 |
 | Baseline: logistic regression on 32×32 pixels | 0.771 | 0.772 | 0.754 | 0.675 | 0.953 | 25 | 92 |
-| **Final model (ensemble + TTA)** | **0.826** | **0.828** | 0.805 | **0.714** | 0.953 | **8** | 73 |
-| **Final + safety tuning** | 0.809 | 0.767 | **0.941** | 0.419 | **0.984** | 13 | **22** |
+| **Final model (ensemble + TTA)** | **0.844** | **0.842** | 0.834 | **0.724** | 0.972 | **7** | 62 |
+| **Final + safety tuning** | 0.816 | 0.775 | **0.952** | 0.453 | **0.993** | 18 | **18** |
 
 *Dangerous misses = bacterial pneumonia called viral or normal, so the child could miss antibiotics. *Macro recall* averages recall across classes, so a model can't score well by ignoring one.
 
-- **95% confidence intervals** (bootstrapped by patient): accuracy **0.826 [0.796–0.855]**, macro recall **0.828 [0.799–0.856]**, pneumonia caught **0.953 [0.932–0.970]**.
-- **Safety tuning** cut dangerous misses from 73 to 22 and raised pneumonia caught to 98.4%. The cost: more viral cases get called bacterial (viral recall falls from 71% to 42%). We think that's the right trade for a clinic, because over-treating a viral case is less harmful than missing a bacterial one.
-- **Unsure mode:** at 70% confidence the tool decides on 70% of X-rays with **90.1% accuracy** and refers the rest. At 90% confidence it decides on 35% with **98.2% accuracy**.
+- **95% confidence intervals** (bootstrapped by patient): accuracy **0.844 [0.816–0.870]**, macro recall **0.842 [0.814–0.871]**, pneumonia caught **0.972 [0.958–0.985]**.
+- **Safety tuning** cut dangerous misses from 62 to 18 and raised pneumonia caught to 99.3%. The cost: more viral cases get called bacterial (viral recall falls from 72% to 45%). We think that's the right trade for a clinic, because over-treating a viral case is less harmful than missing a bacterial one.
+- **Unsure mode:** at 70% confidence the tool decides on 74% of X-rays with **91.0% accuracy** and refers the rest. At 90% confidence it decides on 37% with **97.7% accuracy**.
 
 Final confusion matrix (rows = true, columns = predicted):
 
 | | normal | bacterial | viral |
 |---|---|---|---|
-| **normal** | 214 | 2 | 6 |
-| **bacterial** | 15 | 301 | 58 |
-| **viral** | 12 | 46 | 145 |
+| **normal** | 215 | 1 | 6 |
+| **bacterial** | 8 | 312 | 54 |
+| **viral** | 8 | 48 | 147 |
 
 ### Robustness: we found a weakness and fixed it
 Macro recall on test X-rays made to look like they came from a different machine:
 
 | Test images | CNN 1 (original) | CNN 2 (clinic-robust) | Ensemble |
 |---|---|---|---|
-| Original | 0.844 | 0.811 | 0.829 |
-| Low contrast | **0.728** | 0.820 | 0.816 |
-| Blur | 0.778 | 0.812 | **0.830** |
-| Low resolution | 0.781 | 0.816 | **0.830** |
+| Original | 0.825 | 0.837 | **0.839** |
+| Low contrast | **0.662** | **0.828** | 0.808 |
+| Blur | 0.724 | 0.834 | 0.834 |
+| Low resolution | 0.726 | 0.833 | 0.833 |
 
-CNN 1 dropped to 0.728 on low-contrast X-rays. The ensemble stays at about 0.82–0.83 on every kind of image.
+CNN 1 dropped to 0.662 on low-contrast X-rays. CNN 2 and the ensemble stay at about 0.81–0.84 on every kind of image.
 
 ### Shortcut test: is it really looking at the lungs?
 | Input | Macro recall |
 |---|---|
-| Full X-ray | 0.829 |
-| **Lungs blacked out** (only the border visible) | **0.333 (= chance)** |
-| Border blacked out (only the lungs visible) | 0.587 |
+| Full X-ray | 0.839 |
+| **Lungs blacked out** (only the border visible) | **0.336 (≈ chance, 0.333)** |
+| Border blacked out (only the lungs visible) | 0.469 |
 
 With the lungs hidden, the model is no better than guessing. It is **not** using hospital markers or image borders as a shortcut: its skill comes from the lungs.
 
@@ -107,14 +107,14 @@ Balanced accuracy on each population's test set (AUC in brackets):
 
 | Model | X-rays shared? | Children | Adults | Worst case |
 |---|---|---|---|---|
-| Children's hospital only | no | 0.940 (0.989) | 0.783 (0.858) | 0.783 |
+| Children's hospital only | no | 0.917 (0.976) | 0.749 (0.813) | 0.749 |
 | Adult hospital only | no | 0.660 (0.917) | 0.870 (0.958) | 0.660 |
-| Pooled (all X-rays in one place) | **yes** | 0.946 (0.987) | 0.862 (0.930) | 0.862 |
-| **Federated (FedAvg)** | **no, weights only** | 0.852 (0.965) | 0.832 (0.908) | **0.832** |
+| Pooled (all X-rays in one place) | **yes** | 0.948 (0.987) | 0.867 (0.942) | 0.867 |
+| **Federated (FedAvg)** | **no, weights only** | 0.884 (0.954) | 0.831 (0.914) | **0.831** |
 
 - **Federated learning has the best worst-case of any private option.** A model trained at one hospital does badly at the other: the adult-only model caught only 32% of pneumonia in children.
 - **Pooling all the data does best,** but it needs hospitals to hand over patient X-rays.
-- **Honest limitation:** the federated model is cautious on children. It caught 72% of pneumonia, with 98.6% of normal X-rays correctly cleared. Its AUC of 0.965 shows the ranking is good, so tuning its decision threshold per hospital is our next step.
+- **Honest limitation:** the federated model is more cautious on children than pooling. It caught 82% of pneumonia (pooled: 95%), with 95% of normal X-rays correctly cleared. Its AUC of 0.954 shows the ranking is good, so the decision threshold is the issue.
 
 ### Tuberculosis: we caught our own model cheating
 We added the **Tuberculosis (TB) Chest X-ray Database** (adults; 700 TB + 1,400 normal sampled) as a third hospital, after removing **duplicate images across datasets** with an image fingerprint. Then we trained a normal / pneumonia / TB model.
@@ -135,9 +135,9 @@ On paper, TB detection looks great: 91% caught. **Our four shortcut checks say n
 **Conclusion:** our pneumonia models pass the lungs-blacked-out test (they drop to chance), but the TB model fails it. This is the same trap as the well-known COVID-19 X-ray AI shortcut problem (DeGrave et al., *Nature Machine Intelligence*, 2021). We therefore **do not offer TB detection** in the demo. With only one hospital supplying TB cases, federated learning also failed: the TB hospital's signal was averaged away and the federated model caught 0% of TB. A trustworthy TB model needs TB *and* normal X-rays from many hospitals.
 
 ## Where it fails
-- **Bacterial vs viral mix-ups** cause most errors (104 of 139). That's expected, because even radiologists can't reliably tell the type from an X-ray alone.
+- **Bacterial vs viral mix-ups** cause most errors (102 of 125). That's expected, because even radiologists can't reliably tell the type from an X-ray alone.
 - **The most confident mistakes are pneumonia cases called normal.** These look like mild or early cases where the signs are faint at 224×224.
-- **Federated model on children:** it's too cautious, as shown above.
+- **Federated model on children:** it misses more pneumonia than pooling, as shown above.
 - **Data limits:**
   - The children's data comes from one hospital, with no age or sex labels, so we couldn't check fairness across those groups.
   - Labels are doctors' readings, not lab-confirmed causes.
