@@ -29,6 +29,24 @@ Everything is our own convolutional neural network, **trained from scratch** (no
 ![Results](figures/results.png)
 
 ## The problem
+
+### The problem in 8 numbers
+
+| # | Statistic | Source |
+|---|---|---|
+| 1 | Pneumonia killed **740,180 children under 5 in 2019, 14% of under-5 deaths**, the largest infectious cause | [WHO](https://www.who.int/en/news-room/fact-sheets/detail/pneumonia) |
+| 2 | Lower respiratory infections killed **2.18 million people of all ages in 2021** (344M episodes) | [GBD 2021, Lancet Infect Dis 2024](https://openaccess.sgul.ac.uk/id/eprint/117094) |
+| 3 | **About half (51%)** of under-5 lower respiratory infection deaths occur in low-SDI countries | [GBD 2021](https://openaccess.sgul.ac.uk/id/eprint/117094) |
+| 4 | Ghana has **about 3 radiologists per million** (7 of 16 regions have none) vs **about 100 per million in the US** | [Ghana 2023](https://openaccess.city.ac.uk/31768/11/s42058-023-00130-z.pdf); [Nlashwa 2024](https://pmc.ncbi.nlm.nih.gov/articles/PMC12376231) |
+| 5 | Trained readers labelled **8%–61%** of the same child X-rays as pneumonia | [Cherian, Bull WHO 2005](https://scielosp.org/article/bwho/2005.v83n5/353-359) |
+| 6 | **61%** of severe child pneumonia in 7 LMICs was viral and 27% bacterial | [PERCH, Lancet 2019](https://hub.jhu.edu/2019/06/27/viruses-cause-pneumonia-rsv-vaccines-needed/) |
+| 7 | AMR directly killed **1.27M people in 2019**; lower respiratory infections were the top syndrome (**more than 400,000**) | [Murray, Lancet 2022](https://www.ox.ac.uk/news/2022-01-20-estimated-12-million-people-died-2019-antibiotic-resistant-bacterial-infections) |
+| 8 | Only **about one-third** of children with pneumonia get antibiotics, though a course costs **under USD 0.50** | [WHO](https://www.who.int/en/news-room/fact-sheets/detail/pneumonia); [UNICEF](https://data.unicef.org/topic/child-help/pneumonia/) |
+
+*About these numbers: we used WHO's estimate of child deaths throughout (IHME's method gives a lower figure, about 502,000 for 2021). We left out popular claims we couldn't trace to a primary source, such as "two-thirds of the world lacks access to radiology".*
+
+### Why it matters
+
 **Pneumonia is the world's biggest infectious killer of young children.**
 
 - About **740,000 children under five die of pneumonia every year**, which is 14% of all under-5 deaths and more than any other infectious disease ([WHO, 2019 data](https://www.who.int/en/news-room/fact-sheets/detail/pneumonia)). That is about **one child every 43 seconds** ([UNICEF](https://data.unicef.org/topic/child-help/pneumonia/)).
