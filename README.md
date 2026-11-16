@@ -1,6 +1,6 @@
 # PneumoType: what kind of pneumonia is this X-ray?
 
-**Track:** Health
+**Track:** Health  
 **Team:** [add team names]
 
 > This project is a prototype and is not medical advice.
@@ -10,6 +10,7 @@
 Everything is our own convolutional neural network, **trained from scratch** (no pretrained models).
 
 > **Judges, start here:**
+>
 > - **Notebook with all results:** [`pneumotype.ipynb`](pneumotype.ipynb). Upgrades are in [`pneumotype_upgrades.ipynb`](pneumotype_upgrades.ipynb).
 > - **Demo app:** [`pneumotype_demo.ipynb`](pneumotype_demo.ipynb), shown in the video.
 > - **Agent app:** [`pneumotype_agent.ipynb`](pneumotype_agent.ipynb): a language model coordinates our tools under safety guardrails, with reports in 7 languages.
