@@ -147,6 +147,18 @@ Each hospital keeps the shared federated model but picks its own decision thresh
 
 **Honest result:** local thresholds helped the children's hospital (5 points more pneumonia caught) but slightly hurt the adult hospital, because the threshold chosen on adult validation X-rays didn't carry over to test. That's a useful lesson: per-hospital tuning needs more validation data than we had. For a clinic, we'd also choose thresholds for a target sensitivity rather than balanced accuracy.
 
+### PneumoType Agent: built for clinics with very little
+**The problem we're solving:** many clinics have no radiologist, no powerful computer and unreliable internet, and their health workers may not work in English.
+
+- **Runs on a cheap laptop.** Both our CNNs together are **38 MB** and take **123 ms per X-ray on 2 CPU cores**, with no GPU and no internet needed for the diagnosis.
+- **An AI agent that coordinates, not diagnoses.** A small open language model (Qwen2.5-1.5B-Instruct, not trained by us) never sees the X-ray. It can only **call our tools**: the image-quality check, the two CNNs, a "second look" at extra zoom levels, the Grad-CAM attention check, the conformal 95% set and the federated all-ages model. It decides which tools to call, reads their results, and writes a triage (URGENT / REVIEW TODAY / REVIEW / ROUTINE / REFER) with a plain-language summary.
+- **Safety guardrails the agent can't get around:**
+  1. It can't finish until it has called every required safety tool.
+  2. If it picks a less urgent triage than our fixed safety policy allows, the policy overrides it, and the override is shown to the clinician.
+  3. Invalid replies get one retry, then the next required tool runs automatically.
+- **Speaks the health worker's language.** The triage summary and "Ask the agent" answers come in English, Spanish, French, Portuguese, Hindi, Bengali or Swahili. Answers may only use the tool results, and the agent never gives drug names or doses.
+- **We evaluated the agent's behaviour,** not just its answers (`pneumotype_agent.ipynb`, section 4). AGENT_EVAL_PLACEHOLDER
+
 ### Tuberculosis: we caught our own model cheating
 We added the **Tuberculosis (TB) Chest X-ray Database** (adults; 700 TB + 1,400 normal sampled) as a third hospital, after removing **duplicate images across datasets** with an image fingerprint. Then we trained a normal / pneumonia / TB model.
 
@@ -191,4 +203,5 @@ On paper, TB detection looks great: 91% caught. **Our four shortcut checks say n
 ## How to run
 - **Full project:** open `pneumotype.ipynb` on Kaggle and add the three datasets above as inputs. Turn on GPU T4 and Internet, then Run All. It takes about 90 minutes.
 - **Upgrades (conformal + per-hospital thresholds):** open `pneumotype_upgrades.ipynb` with the PneumoType notebook's output and the two pneumonia datasets as inputs. It reuses the trained weights and takes about 3 minutes.
+- **Agent app:** open `pneumotype_agent.ipynb` with the PneumoType notebook's output and *Chest X-Ray Images (Pneumonia)* as inputs, with GPU T4 and Internet on. It downloads Qwen2.5-1.5B-Instruct from Hugging Face, evaluates the agent, then launches the app.
 - **Demo only:** open `pneumotype_demo.ipynb` and add the PneumoType notebook's output (the trained weights) as an input. It launches the Gradio app in about 2 minutes.
