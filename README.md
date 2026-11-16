@@ -7,22 +7,22 @@
 
 **In one sentence:** PneumoType catches **97% of pneumonia** on chest X-rays it has never seen, tells a doctor whether it looks **bacterial or viral**, says **"unsure, refer"** instead of guessing, and can be trained across hospitals with **federated learning**, so no hospital has to share a single patient X-ray.
 
-Everything is our own convolutional neural network, **trained from scratch** (no pretrained models).
+Everything is my own convolutional neural network, **trained from scratch** (no pretrained models).
 
 > **Judges, start here:**
 >
 > - **Notebook with all results:** [`pneumotype.ipynb`](pneumotype.ipynb). Upgrades are in [`pneumotype_upgrades.ipynb`](pneumotype_upgrades.ipynb).
 > - **Demo app:** [`pneumotype_demo.ipynb`](pneumotype_demo.ipynb), shown in the video.
-> - **Agent app:** [`pneumotype_agent.ipynb`](pneumotype_agent.ipynb): a language model coordinates our tools under safety guardrails, with reports in 7 languages.
-> - **Five-second version:** 97% of pneumonia caught, a 95%-guaranteed answer via conformal prediction, federated learning across children and adults, and a TB model we caught cheating and kept out.
+> - **Agent app:** [`pneumotype_agent.ipynb`](pneumotype_agent.ipynb): a language model coordinates my tools under safety guardrails, with reports in 7 languages.
+> - **Five-second version:** 97% of pneumonia caught, a 95%-guaranteed answer via conformal prediction, federated learning across children and adults, and a TB model I caught cheating and kept out.
 
 ## Key findings
 1. **97% of pneumonia caught** on 799 unseen children's X-rays (95% CI 96–99%), with only **7 false alarms** out of 222 healthy X-rays, beating a simple baseline.
 2. **Safety tuning cut dangerous misses (bacterial cases called viral or normal) from 92 to 18**, and the tool says **"unsure, refer"** instead of guessing. When it's at least 90% confident, it's right **98%** of the time (97.7%).
-3. **We found a weakness and fixed it:** our first CNN fell to 66% on low-quality X-rays, and a second "clinic-robust" CNN brought it back to 83%.
+3. **I found a weakness and fixed it:** my first CNN fell to 66% on low-quality X-rays, and a second "clinic-robust" CNN brought it back to 83%.
 4. **Federated learning across a children's and an adult hospital** gave the best worst-case result of any setup that keeps X-rays private.
 5. **A statistical guarantee, not just a confidence score:** with conformal prediction, the true diagnosis is inside PneumoType's answer **96.4%** of the time on unseen X-rays (target 95%). When it gives a single answer, it's right **95%** of the time; when it can't tell the type, it says "pneumonia, bacterial or viral" instead of guessing.
-6. **We caught our own TB model cheating:** it "detects" TB even with the lungs blacked out. Our pneumonia models pass that test, so we kept TB out of the demo.
+6. **I caught my own TB model cheating:** it "detects" TB even with the lungs blacked out. My pneumonia models pass that test, so I kept TB out of the demo.
 
 ![PneumoType system](figures/system.png)
 
@@ -43,7 +43,7 @@ Everything is our own convolutional neural network, **trained from scratch** (no
 | 7 | AMR directly killed **1.27M people in 2019**; lower respiratory infections were the top syndrome (**more than 400,000**) | [Murray, Lancet 2022](https://www.ox.ac.uk/news/2022-01-20-estimated-12-million-people-died-2019-antibiotic-resistant-bacterial-infections) |
 | 8 | Only **about one-third** of children with pneumonia get antibiotics, though a course costs **under USD 0.50** | [WHO](https://www.who.int/en/news-room/fact-sheets/detail/pneumonia); [UNICEF](https://data.unicef.org/topic/child-help/pneumonia/) |
 
-*About these numbers: we used WHO's estimate of child deaths throughout (IHME's method gives a lower figure, about 502,000 for 2021). We left out popular claims we couldn't trace to a primary source, such as "two-thirds of the world lacks access to radiology".*
+*About these numbers: I used WHO's estimate of child deaths throughout (IHME's method gives a lower figure, about 502,000 for 2021). I left out popular claims I couldn't trace to a primary source, such as "two-thirds of the world lacks access to radiology".*
 
 ### Why it matters
 
@@ -78,13 +78,13 @@ Everything is our own convolutional neural network, **trained from scratch** (no
 | X-ray "opacities" **not confirmed** on CT | **73%** | same study |
 | Share of the **same children's X-rays** called pneumonia by different trained readers | **8% to 61%** | 20 readers ([WHO, *Bull WHO* 2005](https://scielosp.org/article/bwho/2005.v83n5/353-359)) |
 
-*These are adult, US hospital figures, the best large studies available. We found no reliable misdiagnosis rate for children or for clinics without a radiologist, where it is likely worse. This is exactly the gap LungLens targets.*
+*These are adult, US hospital figures, the best large studies available. I found no reliable misdiagnosis rate for children or for clinics without a radiologist, where it is likely worse. This is exactly the gap LungLens targets.*
 
 When a child arrives at a clinic with a cough and fever, the doctor has to decide fast whether it's bacterial pneumonia (needs antibiotics), viral pneumonia (usually doesn't) or no pneumonia at all, often without a radiologist. Guessing wrong either way causes harm: a missed bacterial infection, or unnecessary antibiotics that drive resistance. *(An X-ray alone can't confirm the cause, so LungLens is decision support for a clinician, not a final diagnosis.)*
 
-**Our user:** a doctor at a children's clinic with no radiologist on hand, who wants a fast, honest second opinion on a chest X-ray.
+**My user:** a doctor at a children's clinic with no radiologist on hand, who wants a fast, honest second opinion on a chest X-ray.
 
-## What we built
+## What I built
 - **Input:** one chest X-ray.
 - **Output:**
   1. Normal / bacterial pneumonia / viral pneumonia, with calibrated probabilities.
@@ -93,26 +93,26 @@ When a child arrives at a clinic with a cough and fever, the doctor has to decid
   4. A pneumonia check for **anyone, children or adults**, from a model trained with federated learning.
 - **Demo:** a Gradio web app (shown in the video), launched from the last section of the notebook.
 
-## What we added
-Our own idea. Beyond a basic pneumonia classifier, we added:
+## What I added
+My own idea. Beyond a basic pneumonia classifier, I added:
 1. **Pneumonia type** (bacterial vs viral), because the type changes the treatment.
 2. **Safety tuning** that makes the most dangerous mistake (calling a bacterial case viral or normal) rarer, chosen on validation data only.
 3. **An "unsure, refer" mode** with **calibrated** confidence.
-4. **A robustness fix:** we found our first CNN breaks on lower-quality X-rays, so we trained a second CNN on simulated "different clinic" images and ensembled the two.
-5. **A shortcut test:** we blacked out the lungs to check the model isn't cheating off image borders.
+4. **A robustness fix:** I found my first CNN breaks on lower-quality X-rays, so I trained a second CNN on simulated "different clinic" images and ensembled the two.
+5. **A shortcut test:** I blacked out the lungs to check the model isn't cheating off image borders.
 6. **Children and adults with federated learning:** two simulated hospitals train one model and share only weights, never X-rays.
 7. **95% confidence intervals**, bootstrapped by patient.
-8. **Tuberculosis with four hospital-shortcut checks.** They caught our TB model cheating, so we left TB out of the demo (see below).
+8. **Tuberculosis with four hospital-shortcut checks.** They caught my TB model cheating, so I left TB out of the demo (see below).
 
 ## How it works
 **Data**
 
 - **Children:** Kermany et al. 2018 pediatric chest X-rays from Guangzhou Women and Children's Medical Center, about 5,800 images of children aged 1–5 (normal / bacterial / viral). Split **by patient** 70/15/15, so no child appears in both training and test. The test set has 799 X-rays.
-- **Adults:** COVID-19 Radiography Database. We used 6,000 X-rays: normal and lung-opacity X-rays from RSNA, and COVID-19 pneumonia X-rays.
-- **Leakage check:** that database re-uses 1,341 "normal" X-rays from the children's dataset. We **removed** them using its source metadata.
+- **Adults:** COVID-19 Radiography Database. I used 6,000 X-rays: normal and lung-opacity X-rays from RSNA, and COVID-19 pneumonia X-rays.
+- **Leakage check:** that database re-uses 1,341 "normal" X-rays from the children's dataset. I **removed** them using its source metadata.
 
 **Models** (all trained from random weights)
-- **The CNN:** 5 blocks of convolution → batch norm → ReLU → max-pool (32 to 512 filters), then global average pooling, dropout and a linear layer. About 4.7M parameters, 224×224 grayscale input, class-weighted loss, 25 epochs. We kept the epoch with the best validation macro recall.
+- **The CNN:** 5 blocks of convolution → batch norm → ReLU → max-pool (32 to 512 filters), then global average pooling, dropout and a linear layer. About 4.7M parameters, 224×224 grayscale input, class-weighted loss, 25 epochs. I kept the epoch with the best validation macro recall.
 - **CNN 2 ("clinic-robust"):** the same architecture, trained with random contrast, blur and low-resolution augmentation.
 - **Final model:** the ensemble of CNN 1 and CNN 2, plus test-time augmentation. It was **chosen on validation**, not test. Temperature calibration was checked too (temperature 0.95; calibration error ECE fell from 0.044 to 0.037).
 - **Federated model:** FedAvg across a "children's hospital" and an "adult hospital". Each trains locally for one epoch per round and a server averages the weights, for 8 rounds.
@@ -130,7 +130,7 @@ Our own idea. Beyond a basic pneumonia classifier, we added:
 *Dangerous misses = bacterial pneumonia called viral or normal, so the child could miss antibiotics. *Macro recall* averages recall across classes, so a model can't score well by ignoring one.
 
 - **95% confidence intervals** (bootstrapped by patient): accuracy **0.844 [0.816–0.870]**, macro recall **0.842 [0.814–0.871]**, pneumonia caught **0.972 [0.958–0.985]**.
-- **Safety tuning** cut dangerous misses from 62 to 18 and raised pneumonia caught to 99.3%. The cost: more viral cases get called bacterial (viral recall falls from 72% to 45%). We think that's the right trade for a clinic, because over-treating a viral case is less harmful than missing a bacterial one.
+- **Safety tuning** cut dangerous misses from 62 to 18 and raised pneumonia caught to 99.3%. The cost: more viral cases get called bacterial (viral recall falls from 72% to 45%). I think that's the right trade for a clinic, because over-treating a viral case is less harmful than missing a bacterial one.
 - **Unsure mode:** at 70% confidence the tool decides on 74% of X-rays with **91.0% accuracy** and refers the rest. At 90% confidence it decides on 37% with **97.7% accuracy**.
 
 Final confusion matrix (rows = true, columns = predicted):
@@ -141,7 +141,7 @@ Final confusion matrix (rows = true, columns = predicted):
 | **bacterial** | 8 | 312 | 54 |
 | **viral** | 8 | 48 | 147 |
 
-### Robustness: we found a weakness and fixed it
+### Robustness: I found a weakness and fixed it
 Macro recall on test X-rays made to look like they came from a different machine:
 
 | Test images | CNN 1 (original) | CNN 2 (clinic-robust) | Ensemble |
@@ -177,7 +177,7 @@ Balanced accuracy on each population's test set (AUC in brackets):
 - **Honest limitation:** the federated model is more cautious on children than pooling. It caught 82% of pneumonia (pooled: 95%), with 95% of normal X-rays correctly cleared. Its AUC of 0.954 shows the ranking is good, so the decision threshold is the issue.
 
 ### Conformal prediction: a guaranteed safety net
-A confidence score can be wrong about itself. **Conformal prediction** fixes that with a math guarantee: using the 849 validation X-rays, we pick a cut-off so that the answer is a *set* of possible diagnoses that contains the true one at least 95% of the time on new X-rays (split conformal, LAC score).
+A confidence score can be wrong about itself. **Conformal prediction** fixes that with a math guarantee: using the 849 validation X-rays, I pick a cut-off so that the answer is a *set* of possible diagnoses that contains the true one at least 95% of the time on new X-rays (split conformal, LAC score).
 
 | Target | Actual coverage (799 test X-rays) | Avg. labels in answer | Single-label answers | Accuracy of single-label answers | Coverage: normal / bacterial / viral |
 |---|---|---|---|---|---|
@@ -199,19 +199,19 @@ Each hospital keeps the shared federated model but picks its own decision thresh
 | Adults | shared (0.5) | **0.831** | 88.7% | 77.6% |
 | Adults | own (0.73) | 0.824 | 77.8% | 87.1% |
 
-**Honest result:** local thresholds helped the children's hospital (5 points more pneumonia caught) but slightly hurt the adult hospital, because the threshold chosen on adult validation X-rays didn't carry over to test. That's a useful lesson: per-hospital tuning needs more validation data than we had. For a clinic, we'd also choose thresholds for a target sensitivity rather than balanced accuracy.
+**Honest result:** local thresholds helped the children's hospital (5 points more pneumonia caught) but slightly hurt the adult hospital, because the threshold chosen on adult validation X-rays didn't carry over to test. That's a useful lesson: per-hospital tuning needs more validation data than I had. For a clinic, I'd also choose thresholds for a target sensitivity rather than balanced accuracy.
 
 ### PneumoType Agent: built for clinics with very little
-**The problem we're solving:** many clinics have no radiologist, no powerful computer and unreliable internet, and their health workers may not work in English.
+**The problem I'm solving:** many clinics have no radiologist, no powerful computer and unreliable internet, and their health workers may not work in English.
 
-- **Runs on a cheap laptop.** Both our CNNs together are **38 MB** and take **about 0.1 seconds per X-ray on 2 CPU cores** (102–123 ms across runs), with no GPU and no internet needed for the diagnosis.
-- **An AI agent that coordinates, not diagnoses.** A small open language model (Qwen2.5-1.5B-Instruct, not trained by us) never sees the X-ray. It can only **call our tools**: the image-quality check, the two CNNs, a "second look" at extra zoom levels, the Grad-CAM attention check, the conformal 95% set and the federated all-ages model. It decides which tools to call, reads their results, and writes a triage (URGENT / REVIEW TODAY / REVIEW / ROUTINE / REFER) with a plain-language summary.
+- **Runs on a cheap laptop.** Both my CNNs together are **38 MB** and take **about 0.1 seconds per X-ray on 2 CPU cores** (102–123 ms across runs), with no GPU and no internet needed for the diagnosis.
+- **An AI agent that coordinates, not diagnoses.** A small open language model (Qwen2.5-1.5B-Instruct, not trained by me) never sees the X-ray. It can only **call my tools**: the image-quality check, the two CNNs, a "second look" at extra zoom levels, the Grad-CAM attention check, the conformal 95% set and the federated all-ages model. It decides which tools to call, reads their results, and writes a triage (URGENT / REVIEW TODAY / REVIEW / ROUTINE / REFER) with a plain-language summary.
 - **Safety guardrails the agent can't get around:**
   1. It can't finish until it has called every required safety tool.
-  2. If it picks a less urgent triage than our fixed safety policy allows, the policy overrides it, and the override is shown to the clinician.
+  2. If it picks a less urgent triage than my fixed safety policy allows, the policy overrides it, and the override is shown to the clinician.
   3. Invalid replies get one retry, then the next required tool runs automatically.
 - **Speaks the health worker's language.** The triage summary and "Ask the agent" answers come in English, Spanish, French, Portuguese, Hindi, Bengali or Swahili. Answers may only use the tool results, and the agent never gives drug names or doses.
-- **We evaluated the agent's behaviour,** not just its answers (`pneumotype_agent.ipynb`, section 4). On 18 X-rays (6 normal, 6 bacterial, 6 viral):
+- **I evaluated the agent's behaviour,** not just its answers (`pneumotype_agent.ipynb`, section 4). On 18 X-rays (6 normal, 6 bacterial, 6 viral):
 
 | Measure | Result |
 |---|---|
@@ -221,11 +221,11 @@ Each hospital keeps the shared federated model but picks its own decision thresh
 | Runs that used the "second look" | 17% |
 | Average steps / seconds per X-ray (GPU) | 7.3 / 11.3 s |
 
-  **What this taught us:** a small language model follows the output format perfectly, but it **skips safety checks almost every time** and picks a less urgent triage than the evidence supports more than a quarter of the time. So in PneumoType, the language model only coordinates and explains. Our CNNs, the conformal guarantee and a fixed safety policy make the decision, and every override is shown to the clinician. *These example X-rays come from the dataset's original test folder, which may overlap with our training split, so we report agent behaviour here, not accuracy.*
-- **Honest limitation:** the small language model's free-text answers can still be imperfect. In an early version it misdescribed a pneumonia X-ray as "normal", so we now give it only plain-language facts (including the reason for the triage) and tell it not to add findings.
+  **What this taught me:** a small language model follows the output format perfectly, but it **skips safety checks almost every time** and picks a less urgent triage than the evidence supports more than a quarter of the time. So in PneumoType, the language model only coordinates and explains. My CNNs, the conformal guarantee and a fixed safety policy make the decision, and every override is shown to the clinician. *These example X-rays come from the dataset's original test folder, which may overlap with my training split, so I report agent behaviour here, not accuracy.*
+- **Honest limitation:** the small language model's free-text answers can still be imperfect. In an early version it misdescribed a pneumonia X-ray as "normal", so I now give it only plain-language facts (including the reason for the triage) and tell it not to add findings.
 
-### Tuberculosis: we caught our own model cheating
-We added the **Tuberculosis (TB) Chest X-ray Database** (adults; 700 TB + 1,400 normal sampled) as a third hospital, after removing **duplicate images across datasets** with an image fingerprint. Then we trained a normal / pneumonia / TB model.
+### Tuberculosis: I caught my own model cheating
+I added the **Tuberculosis (TB) Chest X-ray Database** (adults; 700 TB + 1,400 normal sampled) as a third hospital, after removing **duplicate images across datasets** with an image fingerprint. Then I trained a normal / pneumonia / TB model.
 
 | Model (normal / pneumonia / TB) | Balanced acc (all 3 hospitals) | TB caught | Normal X-rays called TB (children / adults / TB hospital) |
 |---|---|---|---|
@@ -234,24 +234,24 @@ We added the **Tuberculosis (TB) Chest X-ray Database** (adults; 700 TB + 1,400 
 
 ![Shortcut test](figures/shortcut_tb.png)
 
-On paper, TB detection looks great: 91% caught. **Our four shortcut checks say not to trust it:**
+On paper, TB detection looks great: 91% caught. **My four shortcut checks say not to trust it:**
 1. **Hospital detector:** a CNN trained only to guess the hospital gets **92.4%** right (chance is 33%), so the hospitals' X-rays look very different.
 2. **Same-hospital test:** inside the TB hospital it still catches 91.3% of TB, with 89.7% of normals cleared.
 3. **Normals called TB:** this happens more often at the TB hospital (10.3%) than for adults (6.7%) or children (0%), a hint of a hospital effect.
 4. **Lungs blacked out:** the model **still "detects" TB 100% of the time with no lungs visible.** That's the smoking gun. Its TB decision is driven by something outside the lungs, such as the image source, borders or exposure, not by the disease.
 
-**Conclusion:** our pneumonia models pass the lungs-blacked-out test (they drop to chance), but the TB model fails it. This is the same trap as the well-known COVID-19 X-ray AI shortcut problem (DeGrave et al., *Nature Machine Intelligence*, 2021). We therefore **do not offer TB detection** in the demo. With only one hospital supplying TB cases, federated learning also failed: the TB hospital's signal was averaged away and the federated model caught 0% of TB. A trustworthy TB model needs TB *and* normal X-rays from many hospitals.
+**Conclusion:** my pneumonia models pass the lungs-blacked-out test (they drop to chance), but the TB model fails it. This is the same trap as the well-known COVID-19 X-ray AI shortcut problem (DeGrave et al., *Nature Machine Intelligence*, 2021). I therefore **do not offer TB detection** in the demo. With only one hospital supplying TB cases, federated learning also failed: the TB hospital's signal was averaged away and the federated model caught 0% of TB. A trustworthy TB model needs TB *and* normal X-rays from many hospitals.
 
 ## Where it fails
 - **Bacterial vs viral mix-ups** cause most errors (102 of 125). That's expected, because even radiologists can't reliably tell the type from an X-ray alone.
 - **The most confident mistakes are pneumonia cases called normal.** These look like mild or early cases where the signs are faint at 224×224.
 - **Federated model on children:** it misses more pneumonia than pooling. A local threshold narrows the gap (82% → 87% caught), but the same trick slightly hurt the adult hospital.
 - **Data limits:**
-  - The children's data comes from one hospital, with no age or sex labels, so we couldn't check fairness across those groups.
+  - The children's data comes from one hospital, with no age or sex labels, so I couldn't check fairness across those groups.
   - Labels are doctors' readings, not lab-confirmed causes.
   - Adult X-rays come from different sources than the children's, so some differences between them may come from equipment, not age.
 
-## What we'd do next
+## What I'd do next
 1. Test the agent with community health workers, measure whether its explanations help them act, and try a larger language model that runs on a laptop.
 2. Add more hospitals to the federation, and set each hospital's threshold for a target sensitivity using more validation data.
 3. Fix the TB shortcut: gather TB and normal X-rays from the *same* hospitals, and train with lung segmentation so the model can only see the lungs.
