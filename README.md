@@ -14,7 +14,8 @@ Everything is our own convolutional neural network, **trained from scratch** (no
 2. **Safety tuning cut dangerous misses (bacterial cases called viral or normal) from 92 to 18**, and the tool says **"unsure, refer"** instead of guessing. When it's at least 90% confident, it's right **98%** of the time (97.7%).
 3. **We found a weakness and fixed it:** our first CNN fell to 66% on low-quality X-rays, and a second "clinic-robust" CNN brought it back to 83%.
 4. **Federated learning across a children's and an adult hospital** gave the best worst-case result of any setup that keeps X-rays private.
-5. **We caught our own TB model cheating:** it "detects" TB even with the lungs blacked out. Our pneumonia models pass that test, so we kept TB out of the demo.
+5. **A statistical guarantee, not just a confidence score:** with conformal prediction, the true diagnosis is inside PneumoType's answer **96.4%** of the time on unseen X-rays (target 95%). When it gives a single answer, it's right **95%** of the time; when it can't tell the type, it says "pneumonia, bacterial or viral" instead of guessing.
+6. **We caught our own TB model cheating:** it "detects" TB even with the lungs blacked out. Our pneumonia models pass that test, so we kept TB out of the demo.
 
 ![PneumoType system](figures/system.png)
 
@@ -116,6 +117,29 @@ Balanced accuracy on each population's test set (AUC in brackets):
 - **Pooling all the data does best,** but it needs hospitals to hand over patient X-rays.
 - **Honest limitation:** the federated model is more cautious on children than pooling. It caught 82% of pneumonia (pooled: 95%), with 95% of normal X-rays correctly cleared. Its AUC of 0.954 shows the ranking is good, so the decision threshold is the issue.
 
+### Conformal prediction: a guaranteed safety net
+A confidence score can be wrong about itself. **Conformal prediction** fixes that with a math guarantee: using the 849 validation X-rays, we pick a cut-off so that the answer is a *set* of possible diagnoses that contains the true one at least 95% of the time on new X-rays (split conformal, LAC score).
+
+| Target | Actual coverage (799 test X-rays) | Avg. labels in answer | Single-label answers | Accuracy of single-label answers | Coverage: normal / bacterial / viral |
+|---|---|---|---|---|---|
+| 80% | 82.6% | 0.97 | 97% | 85.2% | 95.5% / 81.8% / 70.0% |
+| 90% | 93.2% | 1.26 | 74% | 91.7% | 98.2% / 92.2% / 89.7% |
+| **95%** | **96.4%** | **1.44** | **58%** | **95.0%** | **99.5% / 94.9% / 95.6%** |
+
+At 95%, the answers on the test set were: *normal* 206, *bacterial* 155, *viral* 101, ***bacterial or viral*** 292, *normal or viral* 22, *normal or bacterial* 8 and *all three* 15. The most common uncertain answer, "pneumonia, but the type is unclear", is clinically useful in its own right: it says to treat this as pneumonia and get more tests to decide on antibiotics. This matches the biology, since bacterial and viral pneumonia often look alike on an X-ray.
+
+### Per-hospital thresholds for the federated model
+Each hospital keeps the shared federated model but picks its own decision threshold on its own validation X-rays. No X-rays are shared.
+
+| Hospital | Threshold | Balanced acc | Pneumonia caught | Normal cleared |
+|---|---|---|---|---|
+| Children | shared (0.5) | 0.884 | 81.8% | 95.0% |
+| Children | **own (0.42)** | **0.891** | **86.8%** | 91.4% |
+| Adults | shared (0.5) | **0.831** | 88.7% | 77.6% |
+| Adults | own (0.73) | 0.824 | 77.8% | 87.1% |
+
+**Honest result:** local thresholds helped the children's hospital (5 points more pneumonia caught) but slightly hurt the adult hospital, because the threshold chosen on adult validation X-rays didn't carry over to test. That's a useful lesson: per-hospital tuning needs more validation data than we had. For a clinic, we'd also choose thresholds for a target sensitivity rather than balanced accuracy.
+
 ### Tuberculosis: we caught our own model cheating
 We added the **Tuberculosis (TB) Chest X-ray Database** (adults; 700 TB + 1,400 normal sampled) as a third hospital, after removing **duplicate images across datasets** with an image fingerprint. Then we trained a normal / pneumonia / TB model.
 
@@ -137,14 +161,14 @@ On paper, TB detection looks great: 91% caught. **Our four shortcut checks say n
 ## Where it fails
 - **Bacterial vs viral mix-ups** cause most errors (102 of 125). That's expected, because even radiologists can't reliably tell the type from an X-ray alone.
 - **The most confident mistakes are pneumonia cases called normal.** These look like mild or early cases where the signs are faint at 224×224.
-- **Federated model on children:** it misses more pneumonia than pooling, as shown above.
+- **Federated model on children:** it misses more pneumonia than pooling. A local threshold narrows the gap (82% → 87% caught), but the same trick slightly hurt the adult hospital.
 - **Data limits:**
   - The children's data comes from one hospital, with no age or sex labels, so we couldn't check fairness across those groups.
   - Labels are doctors' readings, not lab-confirmed causes.
   - Adult X-rays come from different sources than the children's, so some differences between them may come from equipment, not age.
 
 ## What we'd do next
-1. Tune the federated model's threshold at each hospital, and add more hospitals to the federation.
+1. Add more hospitals to the federation, and set each hospital's threshold for a target sensitivity using more validation data.
 2. Fix the TB shortcut: gather TB and normal X-rays from the *same* hospitals, and train with lung segmentation so the model can only see the lungs.
 3. Test with real clinicians at a clinic, on X-rays from a new hospital.
 
@@ -152,11 +176,12 @@ On paper, TB detection looks great: 91% caught. **Our four shortcut checks say n
 - **Children's dataset:** Kermany, Zhang & Goldbaum (2018), *Labeled Optical Coherence Tomography (OCT) and Chest X-Ray Images for Classification*, Mendeley Data. Kaggle copy: "Chest X-Ray Images (Pneumonia)" by Paul Mooney (CC BY 4.0).
 - **TB dataset:** Tuberculosis (TB) Chest X-ray Database, Rahman et al. 2020, Kaggle (tawsifurrahman/tuberculosis-tb-chest-xray-dataset).
 - **Adult dataset:** COVID-19 Radiography Database, Chowdhury et al. 2020 and Rahman et al. 2021, Kaggle (tawsifurrahman/covid19-radiography-database). It includes RSNA Pneumonia Detection Challenge images.
-- **Methods:** shortcut learning in COVID-19 X-ray AI (DeGrave et al., 2021), FedAvg (McMahan et al., 2017), Grad-CAM (Selvaraju et al., 2017), temperature scaling (Guo et al., 2017).
+- **Methods:** split conformal prediction (Angelopoulos & Bates, 2021), shortcut learning in COVID-19 X-ray AI (DeGrave et al., 2021), FedAvg (McMahan et al., 2017), Grad-CAM (Selvaraju et al., 2017), temperature scaling (Guo et al., 2017).
 - **Libraries:** PyTorch, torchvision, scikit-learn, pandas, matplotlib, Gradio.
 - **No pretrained models.**
 - **AI tools:** Claude (Anthropic) helped plan the project and draft code and this write-up. [Add any others.]
 
 ## How to run
 - **Full project:** open `pneumotype.ipynb` on Kaggle and add the three datasets above as inputs. Turn on GPU T4 and Internet, then Run All. It takes about 90 minutes.
+- **Upgrades (conformal + per-hospital thresholds):** open `pneumotype_upgrades.ipynb` with the PneumoType notebook's output and the two pneumonia datasets as inputs. It reuses the trained weights and takes about 3 minutes.
 - **Demo only:** open `pneumotype_demo.ipynb` and add the PneumoType notebook's output (the trained weights) as an input. It launches the Gradio app in about 2 minutes.
