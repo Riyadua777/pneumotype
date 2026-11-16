@@ -1,7 +1,7 @@
 # PneumoType: what kind of pneumonia is this X-ray?
 
 **Track:** Health  
-**Team:** [add team names]
+**Team:** Riya Dua
 
 > This project is a prototype and is not medical advice.
 
