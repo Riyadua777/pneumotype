@@ -20,8 +20,8 @@ Record your screen with your voice over it. All numbers are from the final Kaggl
 ## 1:15–1:45 · How it works and how well (show: the results table, then the federated chart)
 > "Everything is our own neural network, trained from scratch. On 799 X-rays it had never seen, it caught 95% of pneumonia cases, with only 8 false alarms out of 222 healthy children. A simple baseline missed 92 bacterial cases; with our safety tuning we miss 22. When it's at least 90% confident, it's right 98% of the time. And for children and adults together, federated learning gave the best worst-case result of any setup that keeps X-rays private: 83% balanced accuracy on both."
 
-## 1:45–2:00 · Honest limits and next steps (show: shortcut test or failure examples)
-> "It's not perfect. Bacterial versus viral is hard even for radiologists. Our first model dropped to 73% on low-contrast X-rays, so we trained a second, robust model, and together they stay at 82–83% on every kind of image. We also blacked out the lungs to check it wasn't cheating, and it dropped to pure chance, so it really is reading the lungs. Next: tune the federated model at each hospital, and test at a real clinic. This is a prototype, not medical advice."
+## 1:45–2:00 · The twist: we caught a model cheating (show: figures/shortcut_tb.png)
+> "We also tried tuberculosis. It looked 91% accurate, but when we blacked out the lungs it still 'found' TB 100% of the time. It was recognising which hospital the X-ray came from, not the disease. Our pneumonia models pass that test, so we left TB out of the demo. Next: TB data from many hospitals, and testing at a real clinic. This is a prototype, not medical advice."
 
 ---
 

@@ -9,6 +9,13 @@
 
 Everything is our own convolutional neural network, **trained from scratch** (no pretrained models).
 
+## Key findings
+1. **95% of pneumonia caught** on 799 unseen children's X-rays (95% CI 93–97%), with only **8 false alarms** out of 222 healthy X-rays, beating a simple baseline.
+2. **Safety tuning cut dangerous misses (bacterial cases called viral or normal) from 92 to 22**, and the tool says **"unsure, refer"** instead of guessing. When it's at least 90% confident, it's right **98%** of the time.
+3. **We found a weakness and fixed it:** our first CNN fell to 73% on low-quality X-rays, and a second "clinic-robust" CNN brought it back to 82–83%.
+4. **Federated learning across a children's and an adult hospital** gave the best worst-case result of any setup that keeps X-rays private.
+5. **We caught our own TB model cheating:** it "detects" TB even with the lungs blacked out. Our pneumonia models pass that test, so we kept TB out of the demo.
+
 ![PneumoType system](figures/system.png)
 
 ![Results](figures/results.png)
@@ -116,6 +123,8 @@ We added the **Tuberculosis (TB) Chest X-ray Database** (adults; 700 TB + 1,400 
 |---|---|---|---|
 | Pooled (shares X-rays) | 0.854 | 91.3% | 0% / 6.7% / 10.3% |
 | Federated, 3 hospitals | 0.536 | **0%** | n/a |
+
+![Shortcut test](figures/shortcut_tb.png)
 
 On paper, TB detection looks great: 91% caught. **Our four shortcut checks say not to trust it:**
 1. **Hospital detector:** a CNN trained only to guess the hospital gets **92.4%** right (chance is 33%), so the hospitals' X-rays look very different.
